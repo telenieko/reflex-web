@@ -8,7 +8,7 @@ from .search import search_bar
 
 def resource_header(text):
     return rx.text(
-        text, color=rx.color("mauve", 12), padding_bottom="10px", font_weight="600"
+        text, color=rx.color_mode_cond(rx.color("mauve", 12), rx.color("mauve", 10)), padding_bottom="10px", font_weight="600"
     )
 
 
@@ -88,7 +88,7 @@ def resources_section():
                     ),
                     direction="column",
                     background_color=rx.color("mauve", 3),
-                    border_left=f"1px solid {rx.color('mauve', 4)}",
+                    border_left=rx.color_mode_cond(f"1px solid {rx.color('mauve', 4)};",f"1px solid {rx.color('mauve', 3)};"),
                     align_items="start",
                     height="200px",
                     padding_top="20px",
@@ -100,11 +100,11 @@ def resources_section():
                 spacing="6",
             ),
             border=f"1px solid {rx.color('mauve', 4)}",
-            # background_color = rx.color("mauve", 2),
-            background="#FFF",
+            background=rx.color_mode_cond("#FFF", rx.color("mauve", 3)),
             max_width="1000px",
             height="200px",
             padding="0",
+            overflow="hidden",
         ),
     )
 
@@ -130,12 +130,21 @@ def navigation_section():
 def navbar(sidebar: rx.Component = None) -> rx.Component():
     return rx.flex(
         rx.link(
-            rx.box(
-                rx.image(
-                    src="/logos/light/reflex.svg",
-                    height="20px",
-                    justify="start",
-                )
+            rx.color_mode_cond(
+                rx.box(
+                    rx.image(
+                        src="/logos/light/reflex.svg",
+                        height="20px",
+                        justify="start",
+                    )
+                ),
+                rx.box(
+                    rx.image(
+                        src="/logos/dark/reflex.svg",
+                        height="20px",
+                        justify="start",
+                    )
+                ),
             ),
             href="/",
         ),
@@ -159,8 +168,8 @@ def navbar(sidebar: rx.Component = None) -> rx.Component():
             align_items="center",
         ),
         # background = rx.color("mauve", 1),
-        background="#FFF",
-        border_bottom=f"1px solid {rx.color('mauve', 4)};",
+        background=rx.color_mode_cond("#FFF", rx.color("mauve", 1)),
+        border_bottom=rx.color_mode_cond(f"1px solid {rx.color('mauve', 4)};",f"1px solid {rx.color('mauve', 3)};"),
         height="80px",
         position="fixed",
         width="100%",

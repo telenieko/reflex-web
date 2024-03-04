@@ -35,7 +35,7 @@ def doc_section(*contents):
 
 def feedback_content(icon, score):
     return rx.flex(
-        rx.button(icon, radius="full", variant="soft"),
+        rx.button(icon, radius="full", variant="soft", color=rx.color("violet", 9)),
         rx.box(
             rx.form(
                 rx.flex(
@@ -77,7 +77,8 @@ def feedback(text, icon, score):
                 icon,
                 text,
                 color=rx.color("mauve", 9),
-                border=f"1px solid {rx.color('mauve', 9)}",
+                border=f"1px solid {rx.color('mauve', 4)}",
+                background=rx.color('mauve', 2),
                 align="center",
                 justify="center",
                 border_radius="5px",
@@ -130,7 +131,8 @@ def docpage_footer(path):
                         rx.flex(
                             "Raise an issue",
                             color=rx.color("mauve", 9),
-                            border=f"1px solid {rx.color('mauve', 9)}",
+                            border=f"1px solid {rx.color('mauve', 4)}",
+                            background=rx.color('mauve', 2),
                             align="center",
                             justify="center",
                             border_radius="5px",
@@ -145,7 +147,8 @@ def docpage_footer(path):
                         rx.flex(
                             "Edit this page",
                             color=rx.color("mauve", 9),
-                            border=f"1px solid {rx.color('mauve', 9)}",
+                            border=f"1px solid {rx.color('mauve', 4)}",
+                            background=rx.color('mauve', 2),
                             align="center",
                             justify="center",
                             border_radius="5px",
@@ -164,29 +167,29 @@ def docpage_footer(path):
         rx.flex(
             rx.flex(
                 rx.link(
-                    "Home", color=rx.color("mauve", 11), underline="always", href="/"
+                    "Home", color=rx.color("mauve", 9), underline="always", href="/"
                 ),
                 rx.link(
                     "Gallery",
-                    color=rx.color("mauve", 11),
+                    color=rx.color("mauve", 9),
                     underline="always",
                     href="/docs/gallery",
                 ),
                 rx.link(
                     "Changelog",
-                    color=rx.color("mauve", 11),
+                    color=rx.color("mauve", 9),
                     underline="always",
                     href="/changelog",
                 ),
                 rx.link(
                     "Introduction",
-                    color=rx.color("mauve", 11),
+                    color=rx.color("mauve", 9),
                     underline="always",
                     href="/docs/getting-started/introduction",
                 ),
                 rx.link(
                     "Hosting",
-                    color=rx.color("mauve", 11),
+                    color=rx.color("mauve", 9),
                     underline="always",
                     href="/docs/hosting/deploy-quick-start/",
                 ),
@@ -461,30 +464,23 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                     rx.box(
                         rx.flex(
                             *[
-                                rx.link(
-                                    rx.text(
-                                        text,
-                                        color=rx.color("mauve", 12),
-                                        font_weight="500",
-                                    ),
-                                    href=path + "#" + text.lower().replace(" ", "-"),
+                                rx.text(
+                                    "On This Page",
+                                    color=rx.color_mode_cond(rx.color("mauve", 12), rx.color("mauve", 9)),
+                                    font_weight="500",
                                 )
                                 if level == 1
                                 else rx.link(
-                                    rx.text(
-                                        text,
-                                        color=rx.color("mauve", 11),
-                                        font_weight="400",
-                                    ),
+                                    text,
+                                    color=rx.color_mode_cond(rx.color("mauve", 11), rx.color("mauve", 8)),
+                                    font_weight="400",
                                     href=path + "#" + text.lower().replace(" ", "-"),
                                 )
                                 if level == 2
                                 else rx.link(
-                                    rx.text(
-                                        text,
-                                        color=rx.color("mauve", 11),
-                                        font_weight="400",
-                                    ),
+                                    text,
+                                    color=rx.color_mode_cond(rx.color("mauve", 11), rx.color("mauve", 8)),
+                                    font_weight="400",
                                     href=path + "#" + text.lower().replace(" ", "-"),
                                 )
                                 for level, text in toc
@@ -501,7 +497,6 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                         display=["none", "none", "none", "none", "none", "flex"],
                         flex_shrink=0,
                     ),
-                    background="#FFF",
                     max_width="110em",
                     margin_left="auto",
                     margin_right="auto",
@@ -510,7 +505,7 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                     min_height="100vh",
                     width="100%",
                 ),
-                background="#FFF",
+                background=rx.color_mode_cond("#FFF", rx.color("mauve", 1)),
                 width="100%",
                 justify="center",
             )

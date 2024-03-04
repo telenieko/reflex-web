@@ -1,8 +1,9 @@
+import reflex as rx
 from pcweb import styles
 from pcweb.styles import font_weights as fw
 
 heading_style2 = {
-    "background_color": "#F5F2FF",
+    "background_color": rx.color_mode_cond(rx.color('violet', 3), rx.color('violet', 2)),
     "border_radius": "0.5em",
     "width": "100%",
     "padding_left": "0.5em",

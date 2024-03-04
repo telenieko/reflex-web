@@ -1,5 +1,10 @@
 """The main Reflex website."""
+# test.py
+import cProfile
 
+profiler = cProfile.Profile()
+profiler.enable()
+print("Profiling enabled")
 import os
 import sys
 
@@ -84,3 +89,9 @@ for source, target in redirects:
     app.add_page(lambda: rx.fragment(), route=source, on_load=rx.redirect(target))
 
 app.add_custom_404_page(page404.component)
+# Stop profiling
+profiler.disable()
+
+print("Profiling disabled")
+# Save the profile data to a file
+profiler.dump_stats('myprofile.prof')

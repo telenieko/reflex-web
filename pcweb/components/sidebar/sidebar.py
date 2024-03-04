@@ -59,7 +59,7 @@ def sidebar_leaf(
                         rx.text(
                             item.names,
                             font_size=styles.TEXT_FONT_SIZE,
-                            color="#644FC1",
+                            color=rx.color_mode_cond(rx.color('violet', 10), rx.color('violet', 9)),
                             font_weight="500",
                             margin_left="0.25em",
                         ),
@@ -68,7 +68,7 @@ def sidebar_leaf(
                         margin_bottom="0.2em",
                     ),
                     padding_left="0.5em",
-                    border_left="1.5px solid #644FC1",
+                    border_left=f"1.5px solid {rx.color('violet', 9)}",
                 ),
                 _hover={"text_decoration": "none"},
                 href=item.link,
@@ -77,7 +77,7 @@ def sidebar_leaf(
                 rx.flex(
                     rx.text(
                         item.names,
-                        color=rx.color("mauve", 11),
+                        color=rx.color_mode_cond(rx.color('mauve', 11), rx.color('mauve', 8)),
                         _hover={
                             "color": styles.ACCENT_COLOR,
                             "text_decoration": "none",
@@ -89,7 +89,7 @@ def sidebar_leaf(
                         width="100%",
                     ),
                     padding_left="1em",
-                    border_left="1.5px solid #EEEDEF",
+                    border_left=f"1.5px solid {rx.color('mauve', 3)}",
                 ),
                 _hover={"text_decoration": "none"},
                 href=item.link,
@@ -169,7 +169,7 @@ def sidebar_item_comp(
                 _hover={
                     "color": styles.ACCENT_COLOR,
                 },
-                color="#494369",
+                color=rx.color("mauve", 11),
                 width="100%",
                 padding_left="10px",
                 padding_right="0px",
@@ -240,7 +240,7 @@ def sidebar_category(name, icon, color, index):
         rx.button(
             rx.icon(
                 tag=icon,
-                color=rx.color(color, 1),
+                color="#FFF",
                 size=20,
             ),
             height="30px",
@@ -254,13 +254,17 @@ def sidebar_category(name, icon, color, index):
         ),
         rx.text(
             name,
-            color=rx.color("mauve", 11),
+            color=rx.cond(
+            SidebarState.sidebar_index == index,
+                rx.color("violet", 9),
+                rx.color("mauve", 11),
+            ),
             padding="0px 0px 0px 5px",
         ),
         on_click=lambda: SidebarState.set_sidebar_index(index),
         background=rx.cond(
             SidebarState.sidebar_index == index,
-            "#F5EFFE",
+            rx.color("violet", 2),
             "transparent",
         ),
         align_items="center",

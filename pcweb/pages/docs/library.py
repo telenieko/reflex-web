@@ -28,7 +28,7 @@ def component_grid():
                 col_span=1,
                 box_shadow="rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
                 border_radius="1em",
-                bg_color="white",
+                bg_color=rx.color("mauve", 2),
                 padding="2em",
                 _hover={
                     "box_shadow": "rgba(38, 57, 77, .3) 0px 20px 30px -10px",
