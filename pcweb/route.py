@@ -29,4 +29,8 @@ def get_path(component_fn: Callable):
     module = inspect.getmodule(component_fn)
 
     # Create a path based on the module name.
-    return module.__name__.replace(".", "/").replace("_", "-").split("pcweb/pages")[1]
+    output = module.__name__.replace(".", "/").replace("_", "-").split("pcweb/pages")[1]
+    if not output.endswith("/"):
+        output += "/"
+    print(output)
+    return output
