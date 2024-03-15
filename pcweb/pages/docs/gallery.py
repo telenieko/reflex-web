@@ -10,7 +10,7 @@ apps_list = [
     {
         "name": "Reflex",
         "difficulty": "Advanced",
-        "tags": ["Multi-Page", "Graphs", "Forms", "Data Table", "Database"],
+        "tags": ["Multi-Page", "Graphs",  "Data App", "Database"],
         "description": "This website!",
         "img": "/gallery/pcweb.png",
         "gif": "",
@@ -20,7 +20,7 @@ apps_list = [
     {
         "name": "Chat App",
         "difficulty": "Advanced",
-        "tags": ["Multi-Page", "AI", "React Components"],
+        "tags": ["Multi-Page", "AI", "Custom Components"],
         "description": "An AI chat app.",
         "img": "/gallery/chat.gif",
         "gif": "",
@@ -58,16 +58,6 @@ apps_list = [
         "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/traversal",
     },
     {
-        "name": "Counter",
-        "difficulty": "Beginner",
-        "tags": ["Intro"],
-        "description": "A counter app.",
-        "img": "/gallery/counter.png",
-        "gif": "/gallery/counter.gif",
-        "url": "https://counter.reflex.run",
-        "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/counter",
-    },
-    {
         "name": "GPT Q&A",
         "difficulty": "Advanced",
         "tags": ["AI", "Auth", "Database"],
@@ -75,13 +65,12 @@ apps_list = [
         "img": "/gallery/gpt.png",
         "gif": "/gallery/gpt.gif",
         "url": "",
-        # "url": "https://gpt.pynecone.app/",
         "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/gpt",
     },
     {
         "name": "NBA",
         "difficulty": "Intermediate",
-        "tags": ["Graphs", "Database", "Data Table"],
+        "tags": ["Graphs", "Database", "Data App"],
         "description": "An interactive dashboard for NBA data.",
         "img": "/gallery/nba.png",
         "gif": "/gallery/nba.gif",
@@ -91,23 +80,12 @@ apps_list = [
     {
         "name": "Quiz",
         "difficulty": "Intermediate",
-        "tags": ["Forms", "Data Table", "Database"],
+        "tags": [ "Data App", "Database"],
         "description": "A quiz app that will test your Python knowledge.",
         "img": "/gallery/quiz.png",
         "gif": "/gallery/quiz.gif",
         "url": "https://quiz.dev.reflexcorp.run",
         "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/quiz",
-    },
-    {
-        "name": "Todo",
-        "difficulty": "Beginner",
-        "tags": ["Intro"],
-        "description": "A todo list app.",
-        "img": "/gallery/todo.png",
-        "gif": "/gallery/todo.gif",
-        "url": "",
-        # "url": "https://todo.pynecone.app/",
-        "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/todo",
     },
     {
         "name": "Twitter Clone",
@@ -117,13 +95,12 @@ apps_list = [
         "img": "/gallery/twitter.png",
         "gif": "/gallery/twitter.gif",
         "url": "",
-        # "url": "https://twitter.pynecone.app/",
         "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/twitter",
     },
     {
         "name": "Translator",
         "difficulty": "Beginner",
-        "tags": ["Intro"],
+        "tags": [],
         "description": "A translator app.",
         "img": "/gallery/translator.png",
         "gif": "/gallery/translator.gif",
@@ -133,7 +110,7 @@ apps_list = [
     {
         "name": "Clock",
         "difficulty": "Intermediate",
-        "tags": ["Intro"],
+        "tags": [],
         "description": "An analog clock with different time zones.",
         "img": "/gallery/clock.png",
         "gif": "/gallery/clock.gif",
@@ -141,7 +118,7 @@ apps_list = [
         "source": "https://github.com/pynecone-io/pynecone-examples/tree/main/clock",
     },
     {
-        "name": "Simple Background Tasks",
+        "name": "Background Tasks",
         "difficulty": "Intermediate",
         "tags": ["Streaming"],
         "description": "An app that showcases simple Background tasks.",
@@ -225,18 +202,6 @@ community_apps_list = [
     },
 ]
 
-
-class Gallery(rx.Model):
-    name: str
-    difficulty: str
-    tags: list[str]
-    description: str
-    img: str
-    gif: str
-    url: str
-    source: str
-
-
 apps_df = pd.DataFrame(apps_list)
 
 
@@ -307,7 +272,6 @@ text_color = "black"
 accent_text_color = "#1A1060"
 accent_color = "#F5EFFE"
 
-
 def add_item(category):
     return rx.flex(
         rx.box(
@@ -317,43 +281,63 @@ def add_item(category):
             background_size="cover",
             background_position="center",
             background_repeat="no-repeat",
-            border_radius="12px"
+            border_radius= "8px 8px 0 0"
         ),
         rx.vstack(
             rx.vstack(
-                rx.heading(
-                    category["name"],
-                    size="5",
-                    color="#D6D6ED"
-                ),
-                rx.text(category["description"], size="2", color="#8E8EA8"),
-                align_items="start",
-            ),
-            rx.box(
-                flex_grow=1,
-            ),
-            rx.hstack(
                 rx.hstack(
-                        rx.badge(category["difficulty"]),
+                    rx.heading(
+                        category["name"],
+                        size="4",
+                        color="#D6D6ED"
+                    ),
+                    rx.box(
+                        flex_grow=1,
+                    ),
+                    rx.box(
+                        category["difficulty"], 
+                        border= "1px solid rgba(186, 199, 247, 0.12);",
+                        background= "rgba(161, 157, 213, 0.03);",
+                        backdrop_filter= "blur(2px);",
+                        color="#6C6C81",
+                        padding_x=".25em",
+                        font_size="0.75em",
+                        border_radius="6px",
+                    ),
+                    width="100%",
+                    justify_content="center"
                 ),
-                rx.spacer(),
-                rx.foreach(
-                    category["tags"],
-                    lambda tag: rx.badge(tag, border_radius="15px", padding_x=".5em"),
-                ),
-                color="#8E8EA8",
-                padding_bottom="0.5em",
+                rx.text(category["description"], size="1", color="#8E8EA8"),
+                align_items="start",
                 width="100%",
             ),
             width="100%",
+            height="5em",
             padding_top="1em",
             align_items="start",
-            height="6em",
+            padding_x=".75em",
+        ),
+        rx.box(
+            flex_grow=1,
+        ),
+        rx.hstack(
+            rx.text("Author: Reflex", color="#8E8EA8", font_size="0.75em"),
+            rx.spacer(),
+            rx.icon(
+                tag="external-link",
+                color="rgba(186, 199, 247, 0.12)",
+                size=16
+            ),
+            width = "100%",
+            justify="center",
+            padding_x=".75em",
+            padding_bottom=".25em",
         ),
         direction="column",
+        border= "1px solid #3C3646;",
+        border_radius="8px",
+        height="19em"
     )
-
-
 
 grid_layout=[1, 2, 2, 3, 3, 4]
 
@@ -361,16 +345,14 @@ def component_grid():
     return rx.chakra.responsive_grid(
             rx.foreach(SideBarState.data_to_return, add_item),
             columns=grid_layout,
-            gap=4,
-        ),
-
-
+            gap=6,
+        )
 
 def community_component_grid():
     return rx.chakra.responsive_grid(
             rx.foreach(SideBarState.community_apps_list, add_item),
             columns=grid_layout,
-            gap=4,
+            gap=6,
         )
 
 def sidebar_component_grid(tags):
@@ -384,18 +366,25 @@ def sidebar_component_grid(tags):
                 on_click=SideBarState.update_tag(tag),
                 color="#6C6C81",
                 background="rgba(161, 157, 213, 0.05);",
+                _hover={
+                    "border": "1px solid rgba(102, 90, 241, 0.80);"
+                },
                 _active={
-                    "color": "white",
-                    "background": "#5B4BF0",
-                    "border": "1px solid rgba(186, 199, 247, 0.12);"
+                    "border": "1px solid rgba(102, 90, 241, 0.80);",
+                    "background": "rgba(102, 90, 241, 0.15);",
+
+                },
+                _checked={
+                    "border": "rgba(186, 199, 247, 0.12)",
+                    "bg": "#5B4BF0",
                 },
             )
             for tag in tags
         ],
-        padding_y="1em",
-        padding_x=".5em",
+        padding_bottom="2em",
+        align_items="left",
+        width="100%",
     )
-
 
 def gallery_heading():
     return rx.vstack(
@@ -430,16 +419,11 @@ def gallery_heading():
             text_align="left",
             width="100%",
             spacing="1",
+            padding_bottom="1em",
         )
 
-
-@webpage(path="/docs/gallery", title="Gallery · Reflex")
-def gallery() -> rx.Component:
-    return rx.chakra.vstack(
-        gallery_heading(),
-        rx.vstack(
-            sidebar_component_grid(list_of_tags),
-            component_grid(),
+def community_heading():
+    return rx.vstack(
             rx.chakra.text(
                 "Community Gallery", 
                 font_size="64px;",
@@ -450,13 +434,32 @@ def gallery() -> rx.Component:
                 font_weight="bold",
                 letter_spacing= "-1.28px;",
             ),
-            community_component_grid(),
-            rx.spacer(),
+            rx.text(
+                "Here are some examples of what the team and community has made with Reflex. ",
+                color="#6C6C81",
+            ),
             align_items="center",
+            text_align="left",
+            width="100%",
+            spacing="1",
+            padding_y="2em",
+        )
+
+@webpage(path="/docs/gallery", title="Gallery · Reflex")
+def gallery() -> rx.Component:
+    return rx.chakra.vstack(
+        gallery_heading(),
+        rx.vstack(
+            sidebar_component_grid(list_of_tags),
+            component_grid(),
+            community_heading(),
+            community_component_grid(),
+            align_items="left",
             padding_x="1em",
+            padding_y="8em",
         ),
-        max_width="110em",
+        max_width="80em",
         margin_x="auto",
-        margin_top="80px",
+        margin_top="40px",
         height="100%",
     )

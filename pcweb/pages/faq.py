@@ -100,7 +100,7 @@ def faq_item(question, answer, index):
     return rx.chakra.accordion(rx.chakra.accordion_item(
         rx.chakra.accordion_button(
             rx.heading(
-                question, color="#D6D6ED", font_size=styles.H3_FONT_SIZE
+                question, color="#D6D6ED", font_size="1.25em", font_weight="bold"
             ),
             rx.chakra.spacer(),
             rx.chakra.accordion_icon(color="#6C6C81"),
