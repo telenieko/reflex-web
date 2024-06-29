@@ -3,7 +3,7 @@ components:
     - rx.radix.text_area
 
 TextArea: |
-    lambda **props: rx.radix.themes.text_area(**props)
+    lambda **props: rx.radix.text_area(**props)
 ---
 
 ```python exec
@@ -53,6 +53,18 @@ def controlled_example():
         ),
     )
 ```
+
+### Setting a value without using a State var
+
+Set the value of the specified reference element, without needing to link it up to a State var. This is an alternate way to modify the value of the `text_area`.
+
+```python demo
+rx.hstack(
+    rx.text_area(id="text1"),
+    rx.button("Erase", on_click=rx.set_value("text1", "")),
+)
+```
+
 
 # Real World Example
 

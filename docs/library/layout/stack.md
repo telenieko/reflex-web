@@ -3,6 +3,13 @@ components:
     - rx.radix.stack
     - rx.radix.hstack
     - rx.radix.vstack
+Stack: |
+    lambda **props: rx.stack(
+        rx.card("Card 1", size="2"), rx.card("Card 2", size="2"), rx.card("Card 3", size="2"),
+        width="100%",
+        height="20vh",
+        **props,
+    )
 ---
 
 ```python exec

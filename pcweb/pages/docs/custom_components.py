@@ -1,5 +1,4 @@
 import reflex as rx
-
 import httpx
 import json
 from rxconfig import config
@@ -10,18 +9,16 @@ from pcweb.templates.docpage import docpage, h1_comp, text_comp
 class CustomComponentGalleryState(rx.State):
     tags: list[str] = []
 
-    @rx.var
-    def components_list(self) -> list[dict[str, str]]:
+    components_list: list[dict[str, str]] = []
+
+    def fetch_components_list(self):
         try:
             response = httpx.get(f"{config.cp_backend_url}/custom-components/gallery")
             response.raise_for_status()
             component_list = response.json()
-        except httpx.HTTPError:
-            # TODO
-            return []
-        except json.JSONDecodeError:
-            # TODO:
-            return []
+        except (httpx.HTTPError, json.JSONDecodeError) as ex:
+            print(f"Internal error: failed to fetch components list due to: {ex}")
+            return
 
         for c in component_list:
             c["downloads_last_month"] = c["downloads"]["last_month"]
@@ -31,12 +28,12 @@ class CustomComponentGalleryState(rx.State):
                 for keyword in c["keywords"] or []
                 if "reflex" not in keyword.lower()
             ]
+            c["download_url"] = package_url(c["package_name"])
 
-        return component_list
+        self.components_list = component_list
 
-
-grid_layout = [1, 2, 2, 3, 3]
-
+def package_url(package_name: str) -> str:
+    return f"https://pypi.org/pypi/{package_name}/"
 
 def demo_modal_if_present(demo_url: str) -> rx.Component:
     return rx.cond(
@@ -62,36 +59,37 @@ def demo_modal_if_present(demo_url: str) -> rx.Component:
     )
 
 
-def package_url(package_name: str) -> str:
-    return f"https://pypi.org/pypi/{package_name}/json"
-
-
-def author_card_if_present(author: str) -> rx.Component:
-    return rx.cond(
-        author,
-        info_icon(tag="user"),
+def last_update(time: str) -> rx.Component:
+    return rx.hstack(
+        rx.text(
+            "Last update:",
+            line_height="0.5em",
+            color=rx.color("mauve", 11),
+            size="1",
+        ),
+        rx.text(
+            rx.moment(
+                time,
+                from_now=True,
+            ),
+            size="1",
+            line_height="0.5em",
+            color=rx.color("mauve", 11),
+        ),
     )
 
-
-def updated_on_pypi_if_present(updated_on_pypi: str) -> rx.Component:
-    return rx.cond(
-        updated_on_pypi,
-        info_icon(tag="pencil-line"),
-    )
-
-
-def demo_url_if_present(demo_url: str) -> rx.Component:
+def demo(demo_url: str) -> rx.Component:
     return rx.cond(
         demo_url,
-        info_icon(tag="external-link"),
+        rx.link(
+            info_icon(tag="eye"), 
+            href=demo_url, 
+            is_external=True,
+        ),
     )
 
-
-def download_url_if_present(download_url: str) -> rx.Component:
-    return rx.cond(
-        download_url,
-        rx.link(info_icon(tag="download"), href=download_url),
-    )
+def download(download_url: str) -> rx.Component:
+    return rx.link(info_icon(tag="chevrons-left-right"), href=download_url, is_external=True)
 
 
 def source_if_present(source: str) -> rx.Component:
@@ -100,6 +98,7 @@ def source_if_present(source: str) -> rx.Component:
         rx.link(
             info_icon(tag="github"),
             href=source,
+            is_external=True,
         ),
     )
 
@@ -113,100 +112,179 @@ def pypi_keywords(keywords: rx.Var[list[str]]) -> rx.Component:
         padding_bottom=".5em",
     )
 
+        # rx.button(
+        #     rx.icon(tag="copy", size=18, color=rx.color("mauve", 9)),
+        #     on_click=rx.set_clipboard(code),
 
-def pypi_summary(summary: str) -> rx.Component:
-    return rx.text(
-        summary,
-        color=rx.color("mauve", 11),
-        size="1",
+def install_command(command: str) -> rx.Component:
+    return rx.hstack(
+        rx.button(
+            rx.icon(tag="copy", size=15, color=rx.color("mauve", 9)),
+            on_click=rx.set_clipboard(command),
+            background="transparent",
+            _hover={
+                "opacity": 0.5,
+                "cursor": "pointer",
+                "background": "transparent",
+            },
+            _active={
+                "size": "0.8em",
+                "transform": "scale(0.8)",
+            },
+        ),
+        rx.code_block(
+            command, 
+            custom_style={"fontSize": "0.8em"}, 
+            border_radius="4px",
+            overflow_x="scroll",
+            width="100%",
+            style={
+                "&::-webkit-scrollbar-thumb": {
+                    "background_color": "transparent",
+                },
+                "&::-webkit-scrollbar": {
+                    "background_color": "transparent",
+                    "height": "0px",
+                },
+            },
+        ),
+        width="100%",
+        align="center",
+        justify="center",
     )
 
 
-def pypi_download_box(name: str, downloads: str) -> rx.Component:
-    return rx.hstack(
-        rx.heading(
-            name,
-            size="3",
-        ),
-        rx.box(
-            flex_grow=1,
-        ),
+def download_count(downloads: str) -> rx.Component:
+    return rx.box(
         rx.tooltip(
-            rx.badge(
-                downloads,
-                rx.icon(tag="download", size=12),
+            rx.chakra.badge(
+                rx.hstack(
+                    downloads,
+                    rx.icon(tag="arrow-down-to-line", size=15),
+                    align="center",
+                    justify="center",
+                ),
                 padding_x=".5em",
-                font_size="0.75em",
-                border_radius="6px",
+                font_size="1em",
+                bg=rx.color("accent", 3),
+                color=rx.color("accent", 9),
+                border=f"2px solid {rx.color('accent', 9)}",
+                border_radius="8px",
                 justify="center",
-                background_color="white",
+                align_items="center",
+                variant="solid",
             ),
             content="PyPI downloads last month",
         ),
-        width="100%",
-        justify_content="center",
+        padding_right="0.175em",
+        padding_top="0.175em",
+        position= 'absolute',
+        right= 0,
+        z_index=4
     )
 
+def component_name(name: str) -> rx.Component:
+    return rx.hstack(
+        rx.text(
+            name,
+            size="3",
+            weight="bold",
+            line_height="1em",
+        ),
+        width="100%",
+    )
+
+def component_description(summary: str) -> rx.Component:
+    return rx.hstack(
+        rx.text(
+            summary,
+            color=rx.color("mauve", 11),
+            size="1",
+        ),
+        width="100%",
+    )
 
 def add_item(category: dict) -> rx.Component:
-    name = rx.cond(
-        category["display_name"], category["display_name"], category["package_name"]
+    # Format the package name to be more human readable
+    name = rx.Var.create(
+        f"{{{category['package_name']._var_name}.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}}",
+        _var_is_string=False,
     )
     return rx.flex(
-        rx.cond(
-            category["image_url"],
-            rx.image(src=category["image_url"], width="300px", height="200px"),
-            rx.image(
-                src="/custom_components/default.svg",
-                width="300px",
-                height="200px",
+        rx.box(
+            download_count(category["downloads_last_month"]),
+            rx.cond(
+                category["demo_url"],
+                rx.link(
+                    rx.box(
+                        background_image='url('+category["image_url"]+')',
+                        background_size="cover",
+                        background_position="center",
+                        background_repeat="no-repeat",
+                        height="100%",
+                        width="100%",
+                    ),
+                    href=category["demo_url"],
+                    is_external=True,
+                ),
+                rx.box(
+                    background_image='url('+category["image_url"]+')',
+                    background_size="cover",
+                    background_position="center",
+                    background_repeat="no-repeat",
+                    height="100%",
+                    width="100%",
+                ),
             ),
+            position="relative",
+            height="16rem",
+            width="100%",
+            border_radius="8px 8px 0 0",
+            overflow="hidden",
         ),
-        rx.divider(),
         rx.vstack(
             rx.vstack(
-                pypi_download_box(
-                    name,
-                    category["downloads_last_month"],
-                ),
-                pypi_summary(category["summary"]),
-                pypi_keywords(category["keywords"]),
-                align_items="start",
+                component_name(name),
+                component_description(category["summary"]),
                 width="100%",
+                padding_left="0.4em",
             ),
+            install_command("pip install " + category["package_name"]),
+            rx.hstack(
+                demo(category["demo_url"]),
+                download(category["download_url"]),
+                rx.spacer(),
+                last_update(category["updated_at"]),
+                width="100%",
+                padding_left="0.25em",
+                padding_right="0.25em",
+                justify="center",
+                align="center",
+            ),
+            spacing="1",
             width="100%",
-            height="5em",
-            align_items="start",
+            height="10em",
+            padding=".25em",
         ),
-        rx.divider(),
-        rx.box(
-            flex_grow=1,
-        ),
-        rx.hstack(
-            rx.spacer(),
-            author_card_if_present(category["author"]),
-            updated_on_pypi_if_present(category["updated_on_pypi"]),
-            source_if_present(category["source"]),
-            demo_url_if_present(category["demo_url"]),
-            demo_modal_if_present(category["demo_url"]),
-            download_url_if_present(category["download_url"]),
-            width="100%",
-            justify="center",
-            padding_top=".5em",
-        ),
-        spacing="3",
         direction="column",
         border_radius="8px",
-        box_shadow=" 0px 0px 0px 1px #E8E9EB, 0px 4px 4px -4px rgba(194, 198, 215, 0.30), 0px 1px 4px -1px rgba(135, 144, 181, 0.40); #FFFFFF",
-        padding=".75em",
+        border=f"2px solid {rx.color('mauve', 4)}",
+        _hover={
+            "border": f"4px solid {rx.color('mauve', 4)}",
+            "cursor": "pointer",
+        },
+        width="100%",
+        height="23em",
     )
 
 
 def component_grid():
     return rx.chakra.responsive_grid(
         rx.foreach(CustomComponentGalleryState.components_list, add_item),
-        columns=grid_layout,
-        gap=4,
+        columns=[1,2,2,2,3,3],
+        gap="4",
+        min_child_width="20em",
+        spacing_y="2em",
     )
 
 
@@ -217,16 +295,16 @@ def text_comp(text: rx.Var[str]) -> rx.Component:
 
 def info_icon(
     tag: str,
+    **kwargs,
 ) -> rx.Component:
-    return rx.box(
-        rx.icon(tag=tag, width="1em", height="1em"),
+    return rx.badge(
+        rx.icon(tag=tag, width="1.4em", height="1.4em"),
         padding_x="0.5em",
         border_radius="15px",
-        box_shadow="0px 0px 0px 1px rgba(84, 82, 95, 0.14), 0px 1px 2px rgba(31, 25, 68, 0.14)",
     )
 
 
-@docpage()
+@docpage(right_sidebar=False)
 def custom_components() -> rx.Component:
     return rx.flex(
         h1_comp(text="Custom Components"),
@@ -237,4 +315,5 @@ def custom_components() -> rx.Component:
         flex_direction="column",
         height="100%",
         margin_bottom="4em",
+        on_mount=CustomComponentGalleryState.fetch_components_list,
     )

@@ -10,7 +10,7 @@ Try typing a color in an input below and clicking away from it to change the col
 
 ```python demo exec
 class ArgState(rx.State):
-    colors: list[str] = ["rgba(222,44,12)", "white", "#007ac2"]
+    colors: list[str] = ["rgba(245,168,152)", "MediumSeaGreen", "#DEADE3"]
 
     def change_color(self, color: str, index: int):
         self.colors[index] = color
@@ -31,4 +31,22 @@ The `on_blur` event trigger passes the text of the input as an argument to the l
 ```md alert warning
 # Event Handler Parameters should provide type annotations.
 Like state vars, be sure to provide the right type annotations for the parameters in an event handler.
+```
+
+## Events with Partial Arguments
+
+_Added in v0.5.0_
+
+Event arguments in Reflex are passed positionally. Any additional arguments not
+passed to an EventHandler will be filled in by the event trigger when it is
+fired.
+
+The following two code samples are equivalent:
+
+```python
+# Use a lambda to pass event trigger args to the EventHandler.
+rx.text(on_blur=lambda v: MyState.handle_update("field1", v))
+
+# Create a partial that passes event trigger args for any args not provided to the EventHandler.
+rx.text(on_blur=MyState.handle_update("field1"))
 ```

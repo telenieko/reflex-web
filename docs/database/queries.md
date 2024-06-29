@@ -38,7 +38,7 @@ class QueryUser(rx.State):
         with rx.session() as session:
             self.users = session.exec(
                 User.select().where(
-                    User.username.contains(self.name)).all())
+                    User.username.contains(self.name))).all()
 ```
 
 The `get_users` method will query the database for all users that contain the
@@ -73,7 +73,7 @@ class ChangeEmail(rx.State):
     def modify_user(self):
         with rx.session() as session:
             user = session.exec(User.select().where(
-                (User.username == self.username).first()))
+                (User.username == self.username))).first()
             user.email = self.email
             session.add(user)
             session.commit()
@@ -91,7 +91,7 @@ class RemoveUser(rx.State):
     def delete_user(self):
         with rx.session() as session:
             user = session.exec(User.select().where(
-                User.username == self.username).first())
+                User.username == self.username)).first()
             session.delete(user)
             session.commit()
 ```
@@ -154,8 +154,8 @@ SQL strings.  If parameter binding is needed, the query may be wrapped in
 [`sqlalchemy.text`](https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.text),
 which allows colon-prefix names to be used as placeholders.
 
-```md alert
-Never use string formatting to construct SQL queries, as this may lead to SQL injection vulnerabilities in the app.
+```md alert info
+# Never use string formatting to construct SQL queries, as this may lead to SQL injection vulnerabilities in the app.
 ```
 
 ```python

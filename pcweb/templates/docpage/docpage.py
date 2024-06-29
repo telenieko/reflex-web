@@ -13,7 +13,6 @@ from .state import FeedbackState
 link_style = {
     "color": rx.color("mauve", 10),
     "font_weight": "500",
-    "font_size": ".9em",
 }
 
 def doc_section(*contents):
@@ -39,24 +38,26 @@ def feedback_content(icon, score):
                         placeholder="Contact Info (Optional)",
                         _type="email",
                         name="email",
+                        custom_attrs={"auto_focus": True},
                     ),
                     rx.text_area(
                         placeholder="Write a comment…",
-                        style={"height": 80},
                         name="feedback",
+                        auto_height=True,
+                        enter_key_submit=True,
+                        min_height="0px",
+                        rows="1",
                     ),
                     spacing="1",
                     direction="column",
                 ),
-                rx.popover.close(
-                    rx.flex(
-                        rx.button(
-                            "Send Feedback", size="1", width="100%", type="submit"
-                        ),
-                        spacing="3",
-                        margin_top="12px",
-                        justify="between",
-                    )
+                rx.flex(
+                    rx.button(
+                        "Send Feedback", size="1", width="100%", type="submit"
+                    ),
+                    spacing="3",
+                    margin_top="12px",
+                    justify="between",
                 ),
                 on_submit=lambda feedback: FeedbackState.handle_submit(feedback, score),
             ),
@@ -79,6 +80,7 @@ def feedback(text, icon, score):
                 border_radius="5px",
                 padding="0px 10px",
                 spacing="2",
+                cursor="pointer",
             )
         ),
         rx.popover.content(
@@ -136,7 +138,7 @@ def docpage_footer(path: str):
                             padding="0px 10px",
                             white_space="nowrap",
                         ),
-                        href=f"https://github.com/reflex-dev/reflex/issues/new?title=Issue with reflex.dev documentation&amp;body=Path: {path}",
+                        href=f"https://github.com/reflex-dev/reflex-web/issues/new?title=Issue with reflex.dev documentation&amp;body=Path: {path}",
                     )
                 ),
                 rx.desktop_only(
@@ -316,7 +318,7 @@ def get_toc(source, href, component_list=None):
     return headings
 
 
-def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
+def docpage(set_path: str | None = None, t: str | None = None, right_sidebar: bool = True) -> rx.Component:
     """A template that most pages on the reflex.dev site should use.
 
     This template wraps the webpage with the navbar and footer.
@@ -354,9 +356,9 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                 The page with the template applied.
             """
             # Import here to avoid circular imports.
-            from pcweb.components.navbar import navbar
-            from pcweb.components.sidebar import get_prev_next
-            from pcweb.components.sidebar import sidebar as sb
+            from pcweb.components.docpage.navbar import navbar
+            from pcweb.components.docpage.sidebar import get_prev_next
+            from pcweb.components.docpage.sidebar import sidebar as sb
 
             # Create the docpage sidebar.
             sidebar = sb(url=path, width="18em")
@@ -417,17 +419,15 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                 rx.flex(
                     rx.box(
                         sidebar,
-                        margin_top="120px",
-                        margin_x="2em",
+                        margin_top="110px",
+                        margin_right="2em",
                         height="100%",
-                        width="25%",
+                        width="24%",
                         display=["none", "none", "none", "none", "flex", "flex"],
                         flex_shrink=0,
                     ),
                     rx.box(
-                        rx.box(
-                            breadcrumb(path), margin_top="120px", margin_bottom="20px"
-                        ),
+                        rx.box(breadcrumb(path), margin_top="110px"),
                         rx.box(comp),
                         rx.hstack(
                             *links,
@@ -443,12 +443,11 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                             "none",
                             "none",
                             "none",
-                            "none",
+                            f"1px solid {rx.color('mauve', 4)};",
                             f"1px solid {rx.color('mauve', 4)};",
                         ],
-                        padding_left=styles.PADDING_X,
-                        padding_right=styles.PADDING_X,
-                        width=["100%", "100%", "100%", "100%", "60%", "60%"],
+                        padding_x=styles.PADDING_X,
+                        width=["100%", "97%", "94%", "90%", "70%", "60%"] if right_sidebar else "100%",
                         height="100%",
                     ),
                     rx.box(
@@ -505,10 +504,11 @@ def docpage(set_path: str | None = None, t: str | None = None) -> rx.Component:
                             justify="start",
                             overflow="hidden",
                         ),
-                        margin_top="120px",
-                        width="15%",
+                        margin_top="110px",
+                        width="18%",
                         height="100%",
-                        display=["none", "none", "none", "none", "none", "flex"],
+                        display=["none", "none", "none", "none", "none", "flex"] if right_sidebar else "none",
+
                         flex_shrink=0,
                     ),
                     max_width="110em",

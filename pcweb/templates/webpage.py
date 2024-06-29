@@ -9,7 +9,8 @@ DEFAULT_TITLE = "Web Apps in Pure Python"
 
 def spotlight():
     return rx.flex(
-        rx.html("""
+        rx.html(
+            """
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/css/spotlight.css" />
@@ -52,20 +53,19 @@ def spotlight():
     </div>
   </body>
 </html>
-"""  
-    ),
-    z_index=-1,
-    position="absolute",
-    width="100%",
-    height="100%",
-    align_items="start",
-    justify_content="center",
-    opacity=0.99,
-)
+"""
+        ),
+        z_index=-1,
+        position="absolute",
+        width="100%",
+        height="100%",
+        align_items="start",
+        justify_content="center",
+        opacity=0.97,
+    )
 
 
-
-def webpage(path: str, title: str = DEFAULT_TITLE, props=None) -> Callable:
+def webpage(path: str, title: str = DEFAULT_TITLE, props=None, add_as_page=True) -> Callable:
     """A template that most pages on the reflex.dev site should use.
 
     This template wraps the webpage with the navbar and footer.
@@ -74,6 +74,7 @@ def webpage(path: str, title: str = DEFAULT_TITLE, props=None) -> Callable:
         path: The path of the page.
         title: The title of the page.
         props: Props to apply to the template.
+        add_as_page: whether to add the route to the app pages.
 
     Returns:
         A wrapper function that returns the full webpage.
@@ -101,15 +102,15 @@ def webpage(path: str, title: str = DEFAULT_TITLE, props=None) -> Callable:
                 The component with the template applied.
             """
             # Import here to avoid circular imports.
-            from pcweb.components_webpage.footer import footer
-            from pcweb.components_webpage.navbar import navbar
-            from pcweb.components_webpage.sidebar import sb
+            from pcweb.components.webpage.footer import footer
+            from pcweb.components.webpage.navbar import navbar
+            from pcweb.components.webpage.sidebar import sb
 
             # Wrap the component in the template.
             return rx.flex(
                 navbar(sidebar=sb),
                 spotlight(),
-                rx.container(  
+                rx.container(
                     margin_top="150px",
                 ),
                 contents(*children, **props),
@@ -132,7 +133,9 @@ def webpage(path: str, title: str = DEFAULT_TITLE, props=None) -> Callable:
         return Route(
             path=path,
             title=title,
+            background_color="#131217",
             component=wrapper,
+            add_as_page=add_as_page
         )
 
     return webpage

@@ -29,12 +29,12 @@ A `callout` is a short message to attract user's attention.
 rx.callout("You will need admin privileges to install and access this application.", icon="info")
 ```
 
-The `icon` prop allows an icon to be passed to the `callout` component. See the [**icon** component for all icons that are available.](/docs/library/radix/datadisplay/icon)
+The `icon` prop allows an icon to be passed to the `callout` component. See the [**icon** component for all icons that are available.](/docs/library/datadisplay/icon)
 
 ## As alert
 
 ```python demo
-rx.callout("Access denied. Please contact the network administrator to view this page.", icon="alert_triangle", color_scheme="red", role="alert")
+rx.callout("Access denied. Please contact the network administrator to view this page.", icon="triangle_alert", color_scheme="red", role="alert")
 ```
 
 ## Style

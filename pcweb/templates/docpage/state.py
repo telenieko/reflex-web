@@ -25,7 +25,6 @@ class FeedbackState(rx.State):
         self.feedback_open[score] = change
 
     def handle_submit(self, form_data: dict, score):
-
         feedback = form_data["feedback"]
 
         # Check if the email is valid.
@@ -33,16 +32,17 @@ class FeedbackState(rx.State):
             email = form_data["email"]
 
         if len(feedback) < 10 or len(feedback) > 500:
-            return rx.window_alert(
-                "Please enter your feedback. Between 10 and 500 characters."
+            return rx.toast.warning(
+                "Please enter your feedback. Between 10 and 500 characters.",
+                close_button=True,
             )
 
-        current_page_route = self.get_current_page()
+        current_page_route = self.router.page.raw_path
 
         discord_message = f"""
 Contact: {email}
 Page: {current_page_route}
-Score: {"?" if  score==0 else "👍" if score > 1 else "👎"}
+Score: {"👍" if score == 1 else "👎"}
 Feedback: {feedback}
 """
 
@@ -50,7 +50,16 @@ Feedback: {feedback}
         payload = {"content": discord_message}
         try:
             requests.post(DISCORD_WEBHOOK_URL, json=payload)
-        except:
-            pass
+        except Exception:
+            return rx.toast.error(
+                "An error occurred while submitting your feedback. If the issue persists, "
+                "please file a Github issue or stop by our discord.",
+                close_button=True,
+            )
+        else:
+            yield rx.toast.success(
+                "Thank you for your feedback!",
+                close_button=True,
+            )
 
         self.feedback_open[score] = False

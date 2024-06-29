@@ -9,7 +9,7 @@ from pcweb.pages.docs import vars, library
 We use the `cond` component to conditionally render components. The `cond` component acts in a similar way to a conditional (ternary) operator in python, acting in a similar fashion to an `if-else` statement.
 
 ```md alert
-Check out the API reference for [cond docs]({library.layout.cond.path}).
+# Check out the API reference for [cond docs]({library.layout.cond.path}).
 ```
 
 ```python eval
@@ -265,5 +265,56 @@ def cond_style_example():
                 width="25em",
             ),
         ),
+    )
+```
+## Multiple Conditional Statements 
+
+The `rx.match` component in Reflex provides a powerful alternative to`rx.cond` for handling multiple conditional statements and structural pattern matching. This component allows you to handle multiple conditions and their associated components in a cleaner and more readable way compared to nested `rx.cond` structures.
+
+```python demo exec
+from typing import List
+
+import reflex as rx
+
+
+class MatchState(rx.State):
+    cat_breed: str = ""
+    animal_options: List[str] = [
+        "persian",
+        "siamese",
+        "maine coon",
+        "ragdoll",
+        "pug",
+        "corgi",
+    ]
+
+
+def match_demo():
+    return rx.flex(
+        rx.match(
+            MatchState.cat_breed,
+            ("persian", rx.text("Persian cat selected.")),
+            ("siamese", rx.text("Siamese cat selected.")),
+            (
+                "maine coon",
+                rx.text("Maine Coon cat selected."),
+            ),
+            ("ragdoll", rx.text("Ragdoll cat selected.")),
+            rx.text("Unknown cat breed selected."),
+        ),
+        rx.select(
+            [
+                "persian",
+                "siamese",
+                "maine coon",
+                "ragdoll",
+                "pug",
+                "corgi",
+            ],
+            value=MatchState.cat_breed,
+            on_change=MatchState.set_cat_breed,
+        ),
+        direction="column",
+        gap="2",
     )
 ```
